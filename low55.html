@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>压缩55kb</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/WangYuLue/image-conversion/build/conversion.js"></script>
+    <style>
+        #show {
+            width: 800px;
+        }
+        #area{
+            width: 400px;
+            height: 200px;
+            line-height: 200px;
+            border: 2px dashed gray;
+            margin: 0 auto;
+            background-color: rgb(236, 236, 236);
+        }
+    </style>
+</head>
+
+<body style="text-align: center;">
+    <div>说明：一次一张，分辨率为原大小，压缩后右键保存即可</div>
+    <div id="area">图片拖拽到此区域开始压缩</div>
+    <div style="color: red;">貌似科技-QQ1601466212</div>
+    <br />
+    <br />
+    <img src="" id="show">
+    <div id="total"></div>
+    <div id="name1"></div>
+</body>
+
+</html>
+<script>
+    $(document).on({
+        dragleave: function (e) {
+            e.preventDefault();
+        },
+        drop: function (e) { 
+            e.preventDefault();
+        },
+        dragenter: function (e) { 
+            e.preventDefault();
+        },
+        dragover: function (e) { 
+            e.preventDefault();
+        }
+    });
+
+    var show = document.getElementById('show')
+    var total = document.getElementById('total')
+    var name1 = document.getElementById('name1')
+
+    function view(file) {
+        console.log(file)
+        imageConversion.compressAccurately(file, 50).then(res => {
+            total.innerHTML = "压缩后大小" + res.size / 1000 + "KB"
+            blobToBase64(res, (data) => {
+                show.src = data
+            })
+        })
+    }
+
+    function blobToBase64(blob, callback) {
+        let a = new FileReader();
+        a.onload = function (e) {
+            callback(e.target.result);
+        }
+        a.readAsDataURL(blob);
+    }
+
+
+
+    var box = document.getElementById('area'); 
+    box.addEventListener("drop",function (e) {
+            e.preventDefault(); 
+            var fileList = e.dataTransfer.files; 
+            if (fileList.length == 0) {
+                return false;
+            }
+            if (fileList[0].type.indexOf('image') === -1) {
+                alert("您拖的不是图片！");
+                return false;
+            }
+            var img = window.webkitURL.createObjectURL(fileList[0]);
+            var filename = fileList[0].name; 
+            name1.innerHTML = "图片名称"+filename
+            view(fileList[0])
+        },false);
+</script>
